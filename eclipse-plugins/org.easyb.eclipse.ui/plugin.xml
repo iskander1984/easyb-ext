@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+      point = "org.eclipse.ui.newWizards">
+		<category
+		   id = "org.eclipse.ui.easyb"
+		   name="Easyb">
+		</category>
+	 	<wizard
+		   id = "org.easyb.ui.newbehaviour.NewStoryWizard"
+	      	   name = "Story"
+		   class="org.easyb.ui.newbehaviour.NewStoryWizard"
+		   category="org.eclipse.ui.easyb"
+		   icon="resources/images/icons/easyb.png">
+	    	   <description>"Create a story"</description>
+		   <selection class="org.eclipse.core.resources.IResource"/>
+		</wizard>
+		<wizard
+		   id = "org.easyb.ui.newbehaviour.NewSpecificationWizard"
+	      	   name = "Specification"
+		   class="org.easyb.ui.newbehaviour.NewSpecificationWizard"
+		   category="org.eclipse.ui.easyb"
+		   icon="resources/images/icons/easyb.png">
+	    	   <description>"Create a specification"</description>
+		   <selection class="org.eclipse.core.resources.IResource"/>
+		</wizard>
+	</extension>
+	
+	<extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Behaviour editor"
+            extensions="story,specification"
+            contributorClass="org.easyb.ui.editor.BehaviourActionContributor"
+            class="org.easyb.ui.editor.BehaviourEditor"
+            id="org.easyb.ui.editor.BehaviourEditor"
+            default="true">
+      </editor>
+   </extension>
+   
+   <!--Note the behaviour content types extend the groovy ones so as 
+	to be included as part of the Groovy Compilaton Model in the Groovy V2 plugin
+	  			base-type="org.eclipse.jdt.groovy.core.groovySource" -->
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes"
+         id="org.easyb.contenttypes">
+      <content-type
+            file-extensions="story"
+            id="org.easyb.eclipse.contenttype.story"
+            name="easyb story"
+			base-type="org.eclipse.jdt.groovy.core.groovySource"
+            priority="high"
+            describer="">
+      </content-type>
+      <content-type
+            file-extensions="specification"
+            id="org.easyb.eclipse.contenttype.specification"
+            name="easyb specification"
+			base-type="org.eclipse.jdt.groovy.core.groovySource"
+            priority="high"
+            describer="">
+      </content-type>
+   </extension>
+   
+   <extension point="org.eclipse.core.filebuffers.documentSetup"
+   		name="BehaviourDocumentSetupParticipant"
+   		id="org.easyb.ui.editor.BehaviourDocumentSetup">
+   	<participant
+   		class="org.easyb.ui.editor.BehaviourDocumentSetup"
+   		contentTypeId="org.easyb.eclipse.contenttype.story" >
+	</participant>
+	<participant
+   		class="org.easyb.ui.editor.BehaviourDocumentSetup"
+   		contentTypeId="org.easyb.eclipse.contenttype.specification" >
+	</participant> 	
+   </extension>
+   
+   <!--Keywords are used to allow the user to filter 
+   with in the preference dialog-->
+   <extension
+     point="org.eclipse.ui.keywords">
+	    <keyword
+	            label="template templates easyb behaviour story specification"
+	            id="org.easyb.templates.keyword"/>
+	    <keyword
+	            label="launch jar easyb behaviour story specification"
+	            id="org.easyb.launch.keyword"/>
+	            
+   </extension> 
+   
+   	<extension point="org.eclipse.ui.preferencePages">
+		<page 
+         id="org.easyb.ui.preferences.LaunchPreferencePage" 
+         name="Easyb" 
+         class="org.easyb.ui.preferences.LaunchPreferencePage">
+         
+         <keywordReference id="org.easyb.launch.keyword"/>
+      </page>
+       <page id="org.easyb.ui.preferences.BehaviourTemplatePreferencePage" 
+         	name="Behaviour templates" 
+         	class="org.easyb.ui.preferences.BehaviourTemplatePreferencePage"
+         	category="org.easyb.ui.preferences.LaunchPreferencePage">
+			
+         	<keywordReference id="org.easyb.templates.keyword"/>
+      </page>
+	</extension>
+   
+   	<!--<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="org.codehaus.groovy.eclipse.debug.ui.GroovyRetargettableActionAdapterFactory" 
+            adaptableType="org.easyb.ui.editor.BehaviourEditor">
+            <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
+         </factory>-->
+  	<!--	<factory adaptableType="org.eclipse.ui.IFileEditorInput"
+        	class="org.codehaus.groovy.eclipse.adapters.GroovyIFileEditorInputAdapterFactory">
+     		<adapter type="org.codehaus.groovy.ast.ClassNode"/>
+	  	</factory>-->
+   <!-- <factory
+          adaptableType="org.easyb.ui.editor.BehaviourEditor"
+          class="org.codehaus.groovy.eclipse.adapters.GroovyEditorAdapterFactory">
+       <adapter
+             type="org.codehaus.groovy.ast.ModuleNode">
+       </adapter>
+    </factory>-->
+ <!--   </extension>-->
+    
+    <extension
+       point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.easyb.ui.editor.BehaviourEditor"
+            id="org.codehaus.groovy.BreakpointRulerActions">
+         <action
+               label="Toggle Breakpoint"
+               class="org.codehaus.groovy.eclipse.debug.ui.GroovyBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
+               id="org.groovy.codehaus.eclipse.ui.actions.ManageBreakpointRulerAction">
+         </action>
+     </editorContribution>
+     </extension>
+     
+  <!--  <extension
+          point="org.eclipse.jdt.groovy.core.compilationUnitTargets"
+          id="org.easyb.compilationunit.easybCompilationUnitTargets"
+   		  name="Easyb Compilation Units">
+       <compilationUnitTarget
+             class="org.easyb.ui.compilationunit.EasybCompilationUnitTarget"
+             contentTypeId="org.easyb.eclipse.contenttype.story"
+             id="org.easyb.ui.compilationunit.target.story">
+       </compilationUnitTarget>
+       <compilationUnitTarget
+             class="org.easyb.ui.compilationunit.EasybCompilationUnitTarget"
+             contentTypeId="org.easyb.eclipse.contenttype.specification"
+             id="org.easyb.ui.compilationunit.target.specification">
+       </compilationUnitTarget>
+    </extension>-->
+     
+	
+</plugin>

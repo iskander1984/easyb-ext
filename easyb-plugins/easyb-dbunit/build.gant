@@ -1,0 +1,119 @@
+/**
+ * DbUnit easyb plug-in build file
+ */
+ 
+ant.property(file: '../../easyb-version.properties') 
+
+ivySettingsFile = "../../ivysettings.xml"
+
+includeTargets << new File("../../easyb/default_tasks.gant")
+
+/**
+ * Properties needed by default tasks
+ */
+artifactid = "easyb-dbunit"
+version = detectOrDefaultVersion("0.9.8")
+sourcedirs = [gsourcedir]
+
+/**
+ * Project specific properties
+ */
+tarfilename = "${defaultdir}/dist/${artifactid}-${version}.tar"
+
+/**
+ * The version number used by all targets is command line overridden if needed- for example
+ * if you need to create a snapshot version, you can type gant -Dversion=snapshot jar and 
+ * the resultant jar file will be easyb-dbunit-plugin-snapshot.jar instead of reading the 
+ * default value of version from above.
+ */
+def detectOrDefaultVersion(version) {
+    if (ant.project.properties."version" != null) {
+        return ant.project.properties."version"
+    } else {
+        return version
+    }
+}
+
+target("default": "release") {
+    release()
+}
+
+target("groovyc": "compile Groovy classes") {
+    depends(configuregroovy)
+    genericgroovyc([gsourcedir], classdir)
+}
+
+target(jar: "archive project") {
+    depends(groovyc)
+    ant.jar(destfile: "${defaultdir}/${artifactid}-${version}.jar", basedir: classdir) {
+        metainf(dir: "./cfg/web/META-INF", includes: "**")
+    }
+}
+/**
+ * note for releases, this plug-in relies on the main
+ * easyb binary, so there is no need to include
+ * groovy, cli, and easyb itself. Also,
+ * hsqldb isn't needed as it's used for verification.
+ */
+target(release: "compile and archive") {
+    depends(jar)
+    depends("validate-plugin")
+    depends("jar-javadocs")
+    depends("jar-sources")
+    //depends("ivy-publish")
+    
+    ant.mkdir(dir: "${defaultdir}/release/lib")
+    ant.move(file: "${defaultdir}/${artifactid}-${version}.jar", todir: "${defaultdir}/release")
+    ant.copy(file: "${defaultdir}/${artifactid}-${version}-sources.jar", todir: "${defaultdir}/release")
+    ant.copy(file: "${defaultdir}/${artifactid}-${version}-javadocs.jar", todir: "${defaultdir}/release")
+    ant.move(todir: "${defaultdir}/release/lib") {
+        fileset(dir: "./target/lib/") {
+            include(name: "**/easyb-dbunit-*.jar")
+            include(name: "**/dbunit-*.jar")
+			include(name: "**/slf4j-api-*.jar")
+			include(name: "**/crimson-*.jar")
+        }
+    }
+    new File("${defaultdir}/release/lib").eachFile{ fl ->
+      if(!fl.name.contains("easyb-dbunit-")){
+        fl.renameTo(new File("${defaultdir}/release/lib/${fl.name[0..-9]}.jar"))
+      }
+    }
+}
+
+target("validate-plugin": "runs the easyb ant task") {
+    depends(jar)
+
+    ivy.cachepath(pathid:'ivy.test.classpath', conf:"test")
+
+    ant.taskdef(name: "easyb", classname: "org.easyb.ant.BehaviorRunnerTask") {
+        classpath() {
+          path(refid:"ivy.test.classpath")
+        }
+    }
+
+    ant.easyb(failureProperty: "easyb.failed") {
+
+        classpath() {
+            path(refid:"ivy.test.classpath")
+            pathelement(location: "${defaultdir}/${artifactid}-${version}.jar")
+            pathelement(location: gbehaviordir)
+        }
+        report(location: "${defaultdir}/easyb-report.xml", format: "xml")
+        report(location: "${defaultdir}/story-report.txt", format: "txtstory")
+
+        behaviors(dir: gbehaviordir) {
+            include(name: "**/*.story")
+        }
+    }
+
+    ant.fail(if: "easyb.failed", message: "Execution halted as behaviors failed")
+}
+
+target(dist: "create a distribution from the release") {
+    depends(release)
+    ant.mkdir(dir: "${defaultdir}/dist")
+    ant.tar(tarfile: tarfilename, basedir: "${defaultdir}/release")
+    ant.gzip(zipfile: "${tarfilename}.gz", src: tarfilename)
+    ant.delete(file: tarfilename)
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+<idea-plugin>
+  <id>org.easyb.easyb</id>
+  <name>easyb</name>…
+  <description>easyb behavior driven development framework</description>
+  <version>${pom.version}</version>
+  <vendor url="http://www.easyb.org" email="easyb-users@googlegroups.com">easyb.org</vendor>
+  <change-notes><![CDATA[
+  -- includes easyb version 0.9.7 jar<br/>
+  -- includes Groovy version 1.7.2 jar
+  ]]>
+  </change-notes>
+  <idea-version since-build="9164"/>
+
+  <depends>org.intellij.groovy</depends>
+
+  <application-components>
+    <component>
+      <implementation-class>org.easyb.idea.runner.EasybRunConfigurationType</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.easyb.idea.filetypes.EasybFileTypeLoader</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.easyb.idea.templates.EasybLiveTemplateLoader</implementation-class>
+    </component>
+  </application-components>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType implementation="org.easyb.idea.runner.EasybRunConfigurationType"/>
+    <configurationProducer implementation="org.easyb.idea.runner.EasybRunConfigurationProducer"/>
+  </extensions>
+
+</idea-plugin>

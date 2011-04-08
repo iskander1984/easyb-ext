@@ -1,0 +1,1560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"file:////@docbook.base@/dtd/docbookx.dtd">
+<book>
+  <bookinfo>
+    <title>@docbook.project.name@ User Guide (this is a work in progress!)</title>
+
+    <pubdate>@build.date@</pubdate>
+
+    <copyright>
+      <year>Copyright @build.year@ easyb.org</year>
+    </copyright>
+
+    <releaseinfo>@docbook.project.version@</releaseinfo>
+
+    <author>
+      <surname>easyb Development Team</surname>
+
+      <email><ulink
+      url="mailto:easyb-users@googlegroups.com">easyb-users@googlegroups.com
+      </ulink></email>
+    </author>
+  </bookinfo>
+
+  <chapter>
+    <title>Overview</title>
+
+    <para>[Please note, this is an unfinished document and is a work in progress. Feedback and/or help
+        is most welcome!]</para>
+    <para>easyb is a behavior driven development framework for the Java
+    platform. By using a Domain Specific Language, easyb aims to enable
+    executable, yet readable documentation.</para>
+
+    <section>
+      <title>History</title>
+
+      <para>Behavior driven development (or BDD) isn't anything new or
+      revolutionary-- it's just an evolutionary offshoot of test driven
+      development, in which the word test is replaced by the word should.
+      Semantics aside, a lot of people have found that the concept of should
+      is a much more natural development driver than the concept of testing.
+      In fact, when you think in terms of behavior (i.e. shoulds) you'll find
+      that writing specifications is easier to do first, which is the intent
+      of test driven development in the first place.</para>
+
+      <para>What came next was a natural progression from idea to
+      implementation. The idea of TDD had become widely accepted, primarily
+      because of its freely available tooling in the form of JUnit. BDD is
+      following the same path and pulling it to the forefront are a new crop
+      of tools to support it. One of the first was JBehave by Dan North. Dan
+      is regarded as one of the fathers of BDD thru his role in defining it
+      and evangelizing those concepts. JBehave implemented many of the ideas
+      and terms of BDD and did so in code which is the real reference for most
+      developers.</para>
+
+      <para>There was still a significant problem. BDD by its nature is a very
+      Stakeholder centric process and trying to marry up Non-Technical folks
+      with Java syntax is just a recipe for failure or frustration at best.
+      Around the same time, ruby had taken off thanks to Rails and as such
+      DomainSpecificLanguages were becoming a hotbed of discussion among
+      developers. It was only a matter of time before all of the above met at
+      the crossroads. RSpec was first on the scene and provided an early form
+      of BDD that used 'it should' as its primary means of describing
+      behavior. It was a fantastic spark to the community and most assuredly a
+      step in the right direction but it too had its drawbacks. RSpec ran on
+      the Ruby VM and this left the Java world out in the cold. Running RSpec
+      via JRuby was possible but JRuby was a fledgeling project and also came
+      with its own baggage, not the least of which was that Enterprise
+      organizations weren't ready to embrace Ruby or even JRuby.</para>
+
+      <para>Enter groovy and easyb. Groovy runs natively on the JVM with
+      nothing more than a jar file in the classpath. This is key to lowering
+      the barriers of adoption by that Enterprise segment of the population.
+      What Groovy also provides is a dynamic language with all the power and
+      syntatic sugar opportunities for creating a rich DSL. With all the
+      pieces now available, easyb was primed to step in and put them all in
+      place.</para>
+    </section>
+
+    <section>
+      <title>Goals</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>Easy</para>
+        </listitem>
+
+        <listitem>
+          <para>Natual Language DSL for capturing Behaviors</para>
+        </listitem>
+
+        <listitem>
+          <para>Bridge gap between Stakeholders and Development</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Easyb accomplishes all of these goals in spades as you'll see
+      throughout this document. Goal #1 has always been, and continues to be,
+      that it must be easy. To do so, easyb provides out of the box a slew of
+      great features and the easyb team has bundled along with (and built on
+      top of them) a suite of products and plugins.</para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Intro to BDD</title>
+
+    <para>Test Driven Development has proved itself useful for a number of
+    reasons. Improving code quality up front, documenting the intentions of
+    the code its testing (to a small extent), and even assure that bugs are
+    not reintroduced during refactoring. It does not, however, work well to
+    capture the requirements for which the application code is supposed to be
+    implementing. What often happens is that a separate set of requirements
+    are created and maintained. Even worse is that the interpretation of those
+    requirements is most likely different between those that created them and
+    those that are writing code to implement them. This can be directly linked
+    to cost of a project because work has to be redone to make the code
+    reflect what the requirements creators had in mind.</para>
+
+    <para>Behavior Driven Development takes the approach that Stakeholders and
+    Developers should be on the same page when it comes to interpretation of
+    requirements. It is accomplished by changing the verbiage used when
+    defining requirements. This is a key factor because Stakeholders are most
+    often not technical, however, the developers that they employ to implement
+    their requirements primarily know how to communicate in very technical
+    terms. So a common pattern of capturing requirements was created. It is
+    very specific about capturing exactly the context, events and outcomes
+    that make up a requirement, or in BDD terms, a scenario. The scenario is
+    captured in this form:</para>
+
+    <programlisting>given an initial context
+when an event occurs
+then ensure the outcome</programlisting>
+
+    <para>Writing scenarios in this fashion removes the ambiguity and allows
+    both sides to focus on properly capturing, and implementing, the
+    requirements, knowing they are on the same page.</para>
+
+    <para>Lets look at an example requirement and how it fits into the BDD
+    model. The ubiquitous Bank Account example should do just fine.</para>
+
+    <programlisting>given "an account with 100 dollars"
+when "account holder withdrawls 20 dollars"
+then "account should have 80 dollars left"</programlisting>
+
+    <para>This is clearly capturing the requirement, and not a single line of
+    code was written. What was just defined was a scenario consisting of the
+    context, events and expected outcomes. Since we now have a complete
+    scenario, we'll go ahead and explicitly state that as well.</para>
+
+    <programlisting>scenario "money is withdrawn from an account containing sufficient funds"
+  given "an account with 100 dollars"
+  when "account holder withdrawls 20 dollars"
+  then "account should have 80 dollars left"</programlisting>
+
+    <para>Multiple scenarios that are members of a logical theme can be
+    grouped together in a story.</para>
+
+    <programlisting>AccountWithdrawlStory
+
+scenario "money is withdrawn from an account containing sufficient funds"
+  given "an account with 100 dollars"
+  when "account holder withdrawls 20 dollars"
+  then "account should have 80 dollars left"
+
+scenario "money is withdrawn from an account with insufficient funds"
+  given "an account with 10 dollars"
+  when "account holder withdrawls 20 dollars"
+  then "account holder should be notified about the insufficient funds"
+  and "then account should still have 10 dollars"</programlisting>
+
+    <para>Additionally, further clarity around exactly what viewpoint this is
+    being written from can be added via a narrative.</para>
+
+    <programlisting>AccountWithdrawlStory
+
+narrative "scenarios written from the viewpoint of bank"
+  as a "bank"
+  i want "to verify that withdrawls work on accounts with sufficient and insufficient funds"
+  so that "i do not lose money or confuse the customers" 
+  
+
+scenario "money is withdrawn from an account containing sufficient funds"
+  given "an account with 100 dollars"
+  when "account holder withdrawls 20 dollars"
+  then "account should have 80 dollars left"
+
+scenario "money is withdrawn from an account with insufficient funds"
+  given "an account with 10 dollars"
+  when "account holder withdrawls 20 dollars"
+  then "account holder should be notified about the insufficient funds"
+  and "then account should still have 10 dollars"</programlisting>
+
+    <para>What we have accomplished here is to establish a conversation
+    between stakeholder and developer in common terms. Effectively we are
+    capturing the behavior of a system and from that we can derive our
+    specific development tasks.</para>
+  </chapter>
+
+  <chapter>
+    <title>BDD the easyb way</title>
+
+    <para>"Ok, great. Looks like just another way for the business to bury me
+    in more requirements documents.", you say. What if we can actually make
+    that documentation executable. Thats right, take it almost verbatim and
+    run it. Easyb allows exactly that. First we'll focus on just one of the
+    bank account scenarios and sprinkle in some very minor syntax
+    additions.</para>
+
+    <programlisting>scenario "money is withdrawn from an account containing sufficient funds", {
+  given "an account with 100 dollars"
+  when "account holder withdrawls 20 dollars"
+  then "account should have 80 dollars left"
+}</programlisting>
+
+    <para>That should do it. A comma and two braces. That wasn't too painful
+    was it? Now lets run it. Save that text into a file named
+    AccountWithdrawl.story and then tell easyb where to find it.</para>
+
+    <programlisting width="">java -cp easyb-0.9.3.jar:commons-cli-1.1.jar:groovy-1.5.4.jar \
+&gt;  org.disco.easyb.BehaviorRunner \
+&gt;  ./behavior/groovy/org/disco/bdd/story/account/AccountWithdrawl.story</programlisting>
+
+    <para>It worked and we even get some feedback to boot. It tells us that we
+    have run the Account Withdrawl story which contains one scenario, none of
+    which failed and one is pending. Pending? Interesting. Out of the box if
+    you don't provide any actual code to verify objects and behaviors the
+    scenario is marked as pending. This is an undeniably useful way to bridge
+    the gap between a scenario the Stakeholder hands you and one that you've
+    since had time and domain understanding to write the code to verify the
+    behavior.</para>
+
+    <programlisting>Running account withdrawl story (AccountWithdrawl.story)
+Scenarios run: 1, Failures: 0, Pending: 1, Time Elapsed: 0.453 sec
+
+1 behavior run (including 1 pending behavior) with no failures</programlisting>
+
+    <para>We shouldn't forget about the other scenario given to us, so we'll
+    add it to the same story now.</para>
+
+    <programlisting>scenario "money is withdrawn from an account containing sufficient funds", {
+  given "an account with 100 dollars"
+  when "account holder withdrawls 20 dollars"
+  then "account should have 80 dollars left"
+}
+
+scenario "money is withdrawn from an account with insufficient funds", {
+  given "an account with 10 dollars"
+  when "account holder withdrawls 20 dollars"
+  then "account holder should be notified about the insufficient funds"
+  and "then account should still have 10 dollars"
+}</programlisting>
+
+    <para>Run it again and we see the same story now has two behaviors, no
+    failures and 2 pending.</para>
+
+    <programlisting>Running account withdrawl story (AccountWithdrawl.story)
+Scenarios run: 2, Failures: 0, Pending: 2, Time Elapsed: 0.495 sec
+
+2 total behaviors run (including 2 pending behaviors) with no failures</programlisting>
+
+    <para>Enough hocus pocus, on to actually writing some code. We are given a
+    disambiguated set of requirements and it is now far easier for Developers
+    to think in terms of 'should' instead of 'test'. Its just more natural as
+    a human (which developers have sometimes been accused of being) to think
+    in terms of 'it should do xyz'. Again we'll focus on a single scenario, so
+    let's start with the sufficient funds behavior.</para>
+
+    <programlisting>scenario "money is withdrawn from an account containing sufficient funds", {
+  given "an account with 100 dollars", {
+    account = new Account(100);
+  }
+
+  when "account holder withdrawls 20 dollars", {
+    account.withdrawl 20
+  }
+
+  then "account should have 80 dollars left", {
+    account.balance.shouldBe 80
+  }
+}
+
+...</programlisting>
+
+    <para>Still human readable, yet fully functional validation of behavior.
+    What are we waiting for, run it!</para>
+
+    <programlisting>Running account withdrawl story (AccountWithdrawl.story)
+There was an error running your easyb story or specification
+org.codehaus.groovy.control.MultipleCompilationErrorsException: startup failed, Script1.groovy: \
+        25: unable to resolve class Account
+ @ line 25, column 15.
+1 error
+
+    at org.codehaus.groovy.control.ErrorCollector.failIfErrors(ErrorCollector.java:296)
+    at org.codehaus.groovy.control.CompilationUnit.applyToSourceUnits(CompilationUnit.java:787)
+    at org.codehaus.groovy.control.CompilationUnit.compile(CompilationUnit.java:438)
+    at groovy.lang.GroovyClassLoader.parseClass(GroovyClassLoader.java:277)
+    at groovy.lang.GroovyShell.parseClass(GroovyShell.java:572)
+    at groovy.lang.GroovyShell.parse(GroovyShell.java:584)
+    at groovy.lang.GroovyShell.parse(GroovyShell.java:564)
+    at groovy.lang.GroovyShell.evaluate(GroovyShell.java:542)
+    at groovy.lang.GroovyShell.evaluate(GroovyShell.java:518)
+    at org.disco.easyb.domain.Story.execute(Story.java:34)
+    at org.disco.easyb.BehaviorRunner.runBehavior(BehaviorRunner.java:78)
+    at org.disco.easyb.BehaviorRunner.main(BehaviorRunner.java:59)</programlisting>
+
+    <para>Uh-oh. We forgot to add the Account class itself. Create an Account
+    class with a balance member variable and a withdrawl method. It can be in
+    pure Java, or groovy, we'll stick with Java for now.</para>
+
+    <programlisting>package org.disco.bdd.account;
+
+public class Account {
+    private int balance;
+
+    public Account(int initialBalance) {
+        balance = initialBalance;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void withdrawl(int withdrawlAmount) {
+        balance = balance - withdrawlAmount;
+    }
+}</programlisting>
+
+    <para>Import that into the story.</para>
+
+    <programlisting>import org.disco.bdd.account.Account
+
+scenario "money is withdrawn from an account containing sufficient funds", {
+  given "an account with 100 dollars", {
+    account = new Account(100);
+  }
+
+  when "account holder withdrawls 20 dollars", {
+    account.withdrawl 20
+  }
+
+  then "account should have 80 dollars left", {
+    account.balance.shouldBe 80
+  }
+}
+
+...</programlisting>
+
+    <para>Add the location of the Account.class to the classpath and kick it
+    off again.</para>
+
+    <programlisting>java -cp easyb-0.9.3.jar:commons-cli-1.1.jar:groovy-1.5.4.jar:target/behavior-classes \
+&gt; org.disco.easyb.BehaviorRunner \ 
+&gt; ./behavior/groovy/org/disco/bdd/story/account/AccountWithdrawl.story
+ 
+Running account withdrawl story (AccountWithdrawl.story)
+Scenarios run: 2, Failures: 0, Pending: 1, Time Elapsed: 0.538 sec
+
+2 total behaviors run (including 1 pending behavior) with no failures</programlisting>
+
+    <para>Only one behavior is pending now. Lets review what we did in the
+    snippet above. We created an instance of an account, with a balance of 100
+    dollars, because that is what the 'given' told us we should do. Twenty
+    dollars was then withdrawn because that is what the 'when' told us we
+    should be doing. It may look a little different than standard Java but
+    that is just normal groovy syntax. Finally, we verified that 80 dollars
+    still exists in the account because, yes you got it, the 'then' told us
+    that is what was expected. Here is where you encounter some of the
+    syntatic sugar of easyb. The assertion is done in a very readable fashion
+    via the 'should' enhancements available on objects. More focus is given to
+    the 'ensure' and 'should' syntax in the Syntax chapter.</para>
+
+    <para>So far we have successful as well as pending scenarios. If we were
+    all perfect we could stop right there. We're human so we know better,
+    thats why we'll now see what happens when we expect a particular outcome
+    but end up with something different.</para>
+
+    <para>Finishing the second scenario and running it will give us exactly
+    that opportunity.</para>
+
+    <programlisting>...
+
+scenario "money is withdrawn from an account with insufficient funds", {
+  given "an account with 10 dollars", {
+   account = new Account(10);
+  }
+  when "account holder withdrawls 20 dollars", {
+    account.withdrawl 20
+  }
+  then "account holder should be notified about the insufficient funds", {
+    // will cover in the next step
+  }
+  and "then account should still have 10 dollars", {
+    account.balance.shouldBe 10
+  }
+}
+
+
+...</programlisting>
+
+    <programlisting>java -cp easyb-0.9.3.jar:commons-cli-1.1.jar:groovy-1.5.4.jar:target/behavior-classes \
+&gt; org.disco.easyb.BehaviorRunner \ 
+&gt; ./behavior/groovy/org/disco/bdd/story/account/AccountWithdrawl.story
+ 
+Running account withdrawl story (AccountWithdrawl.story)
+FAILURE Scenarios run: 2, Failures: 1, Pending: 0, Time Elapsed: 0.656 sec
+        scenario "money is withdrawn from an account with insufficient funds"
+        step "then account should still have 10 dollars" -- expected 10 but was -10
+
+2 total behaviors run with 1 failure</programlisting>
+
+    <para>According to our requirements it appears that our Account class
+    needs a little better logic.</para>
+
+    <para>Shown below is just the change necessary to the Account class. A
+    minimal amount of logic to validate that we cannot overdraw the
+    account.</para>
+
+    <programlisting>...
+
+    public void withdrawl(int withdrawlAmount) {
+        if(balance - withdrawlAmount &lt; 0) {
+            throw new RuntimeException("This should really be a checked exception, but keeping the list of classes small for the tutorial");
+        } else {
+            balance = balance - withdrawlAmount;            
+        }
+    }
+
+...
+</programlisting>
+
+    <para>A small change to the story itself is in order as well. This is so
+    we can ensure that an exception is thrown when we try to withdrawl more
+    than allowed.</para>
+
+    <programlisting>...
+
+  then "account holder should be notified about the insufficient funds", {
+    ensureThrows(RuntimeException){
+      withdrawl()
+     }
+  }
+
+
+...
+</programlisting>
+
+    <para>Run it and we find that all is indeed good again. What we did was to
+    create a closure to hold the execution of the withdrawl and then call it
+    within the scope of an ensureThrows. That allows easyb to validate that
+    the specified exception was indeed thrown. Since the logic was changed to
+    prevent an overdraw you'll notice that the other condition (of the account
+    balance still being 10 dollars) was satisfied.</para>
+
+    <programlisting>java -cp easyb-0.9.3.jar:commons-cli-1.1.jar:groovy-1.5.4.jar:target/behavior-classes \
+&gt; org.disco.easyb.BehaviorRunner \ 
+&gt; ./behavior/groovy/org/disco/bdd/story/account/AccountWithdrawl.story
+
+Running account withdrawl story (AccountWithdrawl.story)
+Scenarios run: 2, Failures: 0, Pending: 0, Time Elapsed: 0.596 sec
+
+2 total behaviors run with no failures
+</programlisting>
+  </chapter>
+
+  <chapter>
+    <title>Usage</title>
+
+    <para>Some stuff about running easyb</para>
+
+    <section>
+      <title>...Ways to run it</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Reporting</title>
+
+      <para></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Syntax</title>
+
+    <indexterm class="startofrange" id="ix.syntax">
+      <primary>Syntax Specification</primary>
+    </indexterm>
+
+    <para>easyb contains a rich language for capturing behaviors as executable
+    documentation.</para>
+
+    <section>
+      <title>Stories</title>
+
+      <indexterm class="startofrange" id="ix.syntax.stories">
+        <primary>Syntax Specification</primary>
+
+        <secondary>Stories</secondary>
+      </indexterm>
+
+      <para>These entries are normally found within a Story file.</para>
+
+      <section>
+        <title>scenario</title>
+
+        <indexterm>
+          <primary>scenario</primary>
+        </indexterm>
+
+        <para>Illustrate a specific aspect of behavior of the
+        application</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside story file. Multiple may be included in a single story
+          file.</para>
+        </formalpara>
+
+        <programlisting>scenario "description here", {
+  ...
+}</programlisting>
+      </section>
+
+      <section>
+        <title>given, andGiven</title>
+
+        <indexterm>
+          <primary>given</primary>
+        </indexterm>
+
+        <indexterm>
+          <primary>andGiven</primary>
+
+          <see>given</see>
+        </indexterm>
+
+        <para>Context specific to this scenario. Object and Data setup will
+        often happen in a given.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside scenario. Multiple may appear in each scenario. Also
+          appears directly in a story file outside of a scenario (not
+          recommended).</para>
+        </formalpara>
+
+        <programlisting>scenario "scenario description here", {
+  given "given description here", {
+    // given impl here
+  }
+ 
+  andGiven "andGiven description here", {
+    // andGiven impl here
+  }
+
+  ...
+}</programlisting>
+      </section>
+
+      <section>
+        <title>when</title>
+
+        <indexterm>
+          <primary>when</primary>
+        </indexterm>
+
+        <para>An action to be taken.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside scenario. Follows any givens. Multiple may appear in
+          each scenario. Also appears directly in a story file outside of a
+          scenario (not recommended).</para>
+        </formalpara>
+
+        <programlisting>scenario "scenario description here", {
+  ...
+
+  when "when description here", {
+    // when impl here
+  }
+
+  ...
+}</programlisting>
+      </section>
+
+      <section>
+        <title>then, andThen</title>
+
+        <indexterm>
+          <primary>then</primary>
+        </indexterm>
+
+        <indexterm>
+          <primary>andThen</primary>
+
+          <see>then</see>
+        </indexterm>
+
+        <para>Validation of expected outcome.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside scenario. Follows any whens. Multiple may appear in
+          each scenario. Also appears directly in a story file outside of a
+          scenario (not recommended).</para>
+        </formalpara>
+
+        <programlisting>scenario "scenario description here", {
+  ...
+
+  then "then description here", {
+    // then impl here
+  }
+
+  andThen "andThen description here", {
+    // andThen impl here
+  }
+
+  ...
+}</programlisting>
+      </section>
+
+      <section>
+        <title>narrative</title>
+
+        <indexterm>
+          <primary>narrative</primary>
+        </indexterm>
+
+        <para>Gives a bried description of what is to be delivered. Provides a
+        container for other narrative components.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside a story, preferably at the top. Only one can appear in
+          each story.</para>
+        </formalpara>
+
+        <programlisting>narrative "narrative description here", {
+  ...
+}
+
+scenario "scenario description here"  ...</programlisting>
+      </section>
+
+      <section>
+        <title>as_a</title>
+
+        <indexterm>
+          <primary>as_a</primary>
+        </indexterm>
+
+        <para>An aspect that describes the person, or thing, that will benefit
+        from the feature.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside narrative, prior to i_want.</para>
+        </formalpara>
+
+        <programlisting>narrative "narrative description here", {
+  as_a "role description here"
+  ...
+}</programlisting>
+      </section>
+
+      <section>
+        <title>i_want</title>
+
+        <indexterm>
+          <primary>i_want</primary>
+        </indexterm>
+
+        <para>Describes something that the system should do or a feature in
+        business terms and not in terms of technology</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside narrative, following as_a.</para>
+        </formalpara>
+
+        <programlisting>narrative "narrative description here", {
+  ...
+  i_want "feature description here"
+  ...
+}</programlisting>
+      </section>
+
+      <section>
+        <title>so_that</title>
+
+        <indexterm>
+          <primary>so_that</primary>
+        </indexterm>
+
+        <para>Describes the business value accrued from this feature.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside narrative, following i_want.</para>
+        </formalpara>
+
+        <programlisting>narrative "narrative description here", {
+  ...
+  so_that "benefit description here"
+}</programlisting>
+      </section>
+
+      <indexterm class="endofrange" startref="ix.syntax.stories" />
+    </section>
+
+    <section>
+      <title>Specifications</title>
+
+      <indexterm class="startofrange" id="ix.syntax.specifications">
+        <primary>Syntax Specification</primary>
+
+        <secondary>Specifications</secondary>
+      </indexterm>
+
+      <para>The entries below would normally be found exclusively in a
+      Specification file.</para>
+
+      <section>
+        <title>it</title>
+
+        <indexterm>
+          <primary>it</primary>
+        </indexterm>
+
+        <para>Captures a specification. Usually described in terms of
+        should.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>At the root of a Specification file.</para>
+        </formalpara>
+
+        <programlisting>it "should have an it description here", {
+  // it impl here
+}</programlisting>
+      </section>
+
+      <indexterm class="endofrange" startref="ix.syntax.specifications" />
+    </section>
+
+    <section>
+      <title>Common</title>
+
+      <indexterm class="startofrange" id="ix.syntax.common">
+        <primary>Syntax Specification</primary>
+
+        <secondary>Common</secondary>
+      </indexterm>
+
+      <para>The following can be placed in both Story and Specification
+      files.</para>
+
+      <section>
+        <title>and (syntax replacement)</title>
+
+        <indexterm>
+          <primary>and (syntax replacement)</primary>
+        </indexterm>
+
+        <para>Used as replacement syntax for story and specification
+        contstructs. Carries the connotation that it is equivalent to whatever
+        the previous story or specification construct was.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>between, or in place of, story and specification constructs
+          (given, then, etc)</para>
+        </formalpara>
+
+        <programlisting>...
+given "a given description here", {
+  // given impl here
+}
+
+and "equivalent to another given", {
+  // another given impl here
+}
+...</programlisting>
+      </section>
+
+      <section>
+        <title>and (assertion chain)</title>
+
+        <indexterm>
+          <primary>and (assertion chain)</primary>
+        </indexterm>
+
+        <para>Used to logically tie together assertion statements.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>within a story or specification construct, placed between
+          assertions to give more natural language readability</para>
+        </formalpara>
+
+        <programlisting>true.shouldBe true
+and
+false.shouldBe false</programlisting>
+      </section>
+
+      <section>
+        <title>before</title>
+
+        <indexterm>
+          <primary>before</primary>
+        </indexterm>
+
+        <para>Actions to be taken before any Story or Scenario components are
+        run. Usually used for boilerplate setup common to all scenarios or
+        specifications in that file. Placement should be prior to any
+        scenarios (in a story) or specifications.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>At the top of a story or specification, prior to any other
+          easyb components.</para>
+        </formalpara>
+
+        <programlisting>...
+before "a before description here", {
+  // before impl here
+}
+...</programlisting>
+      </section>
+
+      <section>
+        <title>before_each</title>
+
+        <indexterm>
+          <primary>before_each</primary>
+        </indexterm>
+
+        <para>Actions to be taken before every Story or Scenario component is
+        run. Usually used for boilerplate setup common to all scenarios or
+        specifications in that file. Placement should be prior to any
+        scenarios (in a story) or specifications.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>At the top of a story or specification, prior to any other
+          easyb components.</para>
+        </formalpara>
+
+        <programlisting>...
+before_each "a before_each description here", {
+  // before_each impl here
+}
+...</programlisting>
+      </section>
+
+      <section>
+        <title>after</title>
+
+        <indexterm>
+          <primary>after</primary>
+        </indexterm>
+
+        <para>Actions to be taken after any Story or Scenario components are
+        run. Usually used for boilerplate setup common to all scenarios or
+        specifications in that file. Placement should be prior to any
+        scenarios (in a story) or specifications.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>At the top of a story or specification. Follows any before or
+          before_each, prior to any other easyb components.</para>
+        </formalpara>
+
+        <programlisting>...
+after "an after description here", {
+  // after impl here
+}
+...</programlisting>
+      </section>
+
+      <section>
+        <title>after_each</title>
+
+        <indexterm>
+          <primary>after_each</primary>
+        </indexterm>
+
+        <para>Actions to be taken after every Story or Scenario component is
+        run. Placement should be prior to any scenarios (in a story) or
+        specifications.</para>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>At the top of a story or specification. Follows any before or
+          before_each, prior to any other easyb components.</para>
+        </formalpara>
+
+        <programlisting>...
+after_each "an after_each description here", {
+  // after_each impl here
+}
+...</programlisting>
+      </section>
+
+      <indexterm class="endofrange" startref="ix.syntax.common" />
+    </section>
+
+    <section>
+      <title>Assertions</title>
+
+      <para>The meat of the syntactic sugar easyb provides for making
+      assertions very readable.</para>
+
+      <section>
+        <title>should</title>
+
+        <para>All of the should assertions work from left to right. The object
+        on the left having the attributes that will be validated by what is on
+        the right.</para>
+
+        <indexterm class="startofrange" id="ix.syntax.assertions.should">
+          <primary>Syntax Specification</primary>
+
+          <secondary>Should Assertions</secondary>
+        </indexterm>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Inside any of the story or scenario components, typically as
+          part of an 'it' or a 'then'.</para>
+        </formalpara>
+
+        <section>
+          <title>shouldBe</title>
+
+          <indexterm>
+            <primary>shouldBe</primary>
+          </indexterm>
+
+          <para>Equality of target checked against value passed in.</para>
+
+          <programlisting>...
+true.shouldBe true
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldEqual</title>
+
+          <indexterm>
+            <primary>shouldEqual</primary>
+
+            <seealso>shouldBe</seealso>
+          </indexterm>
+
+          <para>Synonym for shouldBe. Equality of target checked against value
+          passed in.</para>
+
+          <programlisting>...
+true.shouldEqual true
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldBeEqual</title>
+
+          <indexterm>
+            <primary>shouldBeEqual</primary>
+
+            <seealso>shouldBe</seealso>
+          </indexterm>
+
+          <para>Synonym for shouldBe. Equality of target checked against value
+          passed in.</para>
+
+          <programlisting>...
+true.shouldBeEqual true
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldBeEqualTo</title>
+
+          <indexterm>
+            <primary>shouldBeEqualTo</primary>
+
+            <seealso>shouldBe</seealso>
+          </indexterm>
+
+          <para>Synonym for shouldBe. Equality of target checked against value
+          passed in.</para>
+
+          <programlisting>...
+true.shouldBeEqualTo true
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldNotBe</title>
+
+          <indexterm>
+            <primary>shouldNotBe</primary>
+          </indexterm>
+
+          <para>Inequality of target checked against value passed in.</para>
+
+          <programlisting>...
+true.shouldNotBe false
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldNotEqual</title>
+
+          <indexterm>
+            <primary>shouldNotEqual</primary>
+
+            <seealso>shouldNotBe</seealso>
+          </indexterm>
+
+          <para>Synonym for shouldNotBe. Inequality of target checked against
+          value passed in.</para>
+
+          <programlisting>...
+true.shouldNotEqual false
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldNotBeEqual</title>
+
+          <indexterm>
+            <primary>shouldNotBeEqual</primary>
+
+            <seealso>shouldNotBe</seealso>
+          </indexterm>
+
+          <para>Synonym for shouldNotBe. Inequality of target checked against
+          value passed in.</para>
+
+          <programlisting>...
+true.shouldNotBeEqual false
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldNotBeEqualTo</title>
+
+          <indexterm>
+            <primary>shouldNotBeEqualTo</primary>
+
+            <seealso>shouldNotBe</seealso>
+          </indexterm>
+
+          <para>Synonym for shouldNotBe. Inequality of target object checked
+          against value passed in.</para>
+
+          <programlisting>...
+true.shouldNotBeEqualTo false
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldBeA</title>
+
+          <indexterm>
+            <primary>shouldBeA</primary>
+          </indexterm>
+
+          <para>Verifies the target's type matches that which is passed
+          in.</para>
+
+          <programlisting>...
+"StringValue".shouldBeA(String)
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldBeA</title>
+
+          <indexterm>
+            <primary>shouldBeA</primary>
+          </indexterm>
+
+          <para>Verifies the target's type matches that which is passed
+          in.</para>
+
+          <programlisting>...
+"StringValue".shouldBeA String
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldBeAn</title>
+
+          <indexterm>
+            <primary>shouldBeAn</primary>
+
+            <seealso>shouldBeA</seealso>
+          </indexterm>
+
+          <para>Synonym for shouldBeA. Verifies the target's type matches that
+          which is passed in.</para>
+
+          <programlisting>...
+1.shouldBeAn Integer
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldNotBeA</title>
+
+          <indexterm>
+            <primary>shouldNotBeA</primary>
+          </indexterm>
+
+          <para>Verifies the target's type does not match that which is passed
+          in.</para>
+
+          <programlisting>...
+1.shouldNotBeA String
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldNotBeAn</title>
+
+          <indexterm>
+            <primary>shouldNotBeAn</primary>
+
+            <seealso>shouldNotBeA</seealso>
+          </indexterm>
+
+          <para>Synonym for shouldNotBeA. Verifies the target's type does not
+          match that which is passed in.</para>
+
+          <programlisting>...
+1.shouldBeAn Integer
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldBeGreaterThan</title>
+
+          <indexterm>
+            <primary>shouldBeGreaterThan</primary>
+          </indexterm>
+
+          <para>Verifies the target is greater than the value passed in using
+          groovy comparison.</para>
+
+          <programlisting>...
+2.shouldBeGreaterThan 1
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldBeLessThan</title>
+
+          <indexterm>
+            <primary>shouldBeLessThan</primary>
+          </indexterm>
+
+          <para>Verifies the target is less than the value passed in using
+          groovy comparison.</para>
+
+          <programlisting>...
+1.shouldBeLessThan 2
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldHave</title>
+
+          <indexterm>
+            <primary>shouldHave</primary>
+          </indexterm>
+
+          <para>Verifies the target contains the value passed in. Collections
+          and Strings are handled in the value positions. Collections, Strings
+          and Object Fields are handled in the target position.</para>
+
+          <programlisting>...
+"test".shouldHave("est")
+
+myMap = [value: "Andy", another: 34, 55: "test"]
+myMap.shouldHave("Andy")
+myMap.shouldHave(55: "test")
+myMap.shouldHave([value: "Andy", 55: "test"])
+...</programlisting>
+        </section>
+
+        <section>
+          <title>shouldNotHave</title>
+
+          <indexterm>
+            <primary>shouldNotHave</primary>
+          </indexterm>
+
+          <para>Verifies the target contains the value passed in. Collections
+          and Strings are handled in the value positions. Collections, Strings
+          and Object Fields are handled in the target position.</para>
+
+          <programlisting>...
+myMap = [value: "Andy", another: 34, 55: "test"]
+myMap.shouldNotHave("Mervin") // covers a value in a map
+myMap.shouldNotHave([value: "Mervin", 55: "somethingnottest"]) // covers a map in a map where neither value is found
+myMap.shouldNotHave([value: "Andy", 55: "somethingnottest"])  // covers a map in a map where at least one value is not found
+myMap.shouldNotHave(55: "foobar") // covers map where key exists but value doesn't
+...</programlisting>
+        </section>
+
+        <indexterm class="endofrange" startref="ix.syntax.assertions.should" />
+      </section>
+
+      <section>
+        <title>ensure</title>
+
+        <para>All of the ensure assertions validate the target (specified as
+        the argument to ensure()) matches the assertion in the term or the
+        argument to the right of the term.</para>
+
+        <indexterm class="startofrange" id="ix.syntax.ensure">
+          <primary>Syntax Specification</primary>
+
+          <secondary>ensure</secondary>
+        </indexterm>
+
+        <formalpara>
+          <title>Appears</title>
+
+          <para>Ensure normally appears inside an 'it' or 'then. All of the
+          assertion terms listed below will appear inside the block associated
+          with the ensure itself.</para>
+        </formalpara>
+
+        <section>
+          <title>isNull</title>
+
+          <indexterm>
+            <primary>isNull</primary>
+          </indexterm>
+
+          <para>Value of target must be null.</para>
+
+          <programlisting>ensure(someNullTargetValue) {
+ isNull
+}</programlisting>
+        </section>
+
+        <section>
+          <title>isNotNull</title>
+
+          <indexterm>
+            <primary>isNotNull</primary>
+          </indexterm>
+
+          <para>Value of target must not be null.</para>
+
+          <programlisting>ensure(someNonNullTargetValue) {
+ isNotNull
+}</programlisting>
+        </section>
+
+        <section>
+          <title>isA&lt;class type&gt;</title>
+
+          <indexterm>
+            <primary>isA</primary>
+          </indexterm>
+
+          <para>Value of target must be the same class as the &lt;class
+          type&gt; at the end of the term.</para>
+
+          <programlisting>ensure(aStringTarget) {
+ isAString
+}</programlisting>
+        </section>
+
+        <section>
+          <title>isEqualTo(value)</title>
+
+          <indexterm>
+            <primary>isEqualTo(value)</primary>
+          </indexterm>
+
+          <para>Value of target must equal the value of the argument to
+          isEqualTo.</para>
+
+          <programlisting>ensure(true) {
+ isEqualTo(true)
+}</programlisting>
+        </section>
+
+        <section>
+          <title>isEqualTo&lt;value&gt;</title>
+
+          <indexterm>
+            <primary>isEqualTo&lt;value&gt;</primary>
+          </indexterm>
+
+          <para>Value of target must equal the value at the end of the
+          term.</para>
+
+          <programlisting>ensure("Test") {
+ isEqualToTest
+}</programlisting>
+        </section>
+
+        <section>
+          <title>isNotEqualTo(value)</title>
+
+          <indexterm>
+            <primary>isNotEqualTo(value)</primary>
+          </indexterm>
+
+          <para>Value of target must not equal the value of the argument to
+          isNotEqualTo.</para>
+
+          <programlisting>ensure(false) {
+ isNotEqualTo(true)
+}</programlisting>
+        </section>
+
+        <section>
+          <title>isNotEqualTo&lt;value&gt;</title>
+
+          <indexterm>
+            <primary>isNotEqualTo&lt;value&gt;</primary>
+          </indexterm>
+
+          <para>Value of target must not equal the value at the end of the
+          term.</para>
+
+          <programlisting>ensure("Foo") {
+ isNotEqualToBar
+}</programlisting>
+        </section>
+
+        <section>
+          <title>isTrue</title>
+
+          <indexterm>
+            <primary>isTrue</primary>
+          </indexterm>
+
+          <para>Value of target must be true.</para>
+
+          <programlisting>ensure(true) {
+ isTrue
+}</programlisting>
+        </section>
+
+        <section>
+          <title>isFalse</title>
+
+          <indexterm>
+            <primary>isFalse</primary>
+          </indexterm>
+
+          <para>Value of target must be false.</para>
+
+          <programlisting>ensure(false) {
+ isFalse
+}</programlisting>
+        </section>
+
+        <section>
+          <title>ensureThrows</title>
+
+          <indexterm>
+            <primary>ensureThrows</primary>
+          </indexterm>
+
+          <para>This is a special variant of the ensure clause. It is used to
+          verify that a block of code must throw an exception of the type
+          specified.</para>
+
+          <programlisting>ensureThrows(RuntimeException.class) {
+  String tst = null
+  tst.toUpperCase()
+}</programlisting>
+        </section>
+
+        <indexterm class="endofrange" startref="ix.syntax.ensure" />
+      </section>
+
+      <section>
+        <title>common</title>
+
+        <para>The remaining assertions are common to both stories and
+        specifications. They can also be used standalone (inside of an ensure)
+        as well as a magic method (similar to the should syntax).</para>
+
+        <indexterm class="startofrange" id="ix.syntax.assertions.common">
+          <primary>Syntax Specification</primary>
+
+          <secondary>common assertions</secondary>
+        </indexterm>
+
+        <section>
+          <title>has</title>
+
+          <indexterm>
+            <primary>has</primary>
+          </indexterm>
+
+          <para>Target's contents must consist of (at minimum) the contents of
+          the argument to has.</para>
+
+          <programlisting>ensure("Test") {
+ has("es")
+}</programlisting>
+
+          <programlisting>...
+ "Test".has("es") // Preferable to use shouldHave instead for readability
+...</programlisting>
+        </section>
+
+        <section>
+          <title>contains</title>
+
+          <indexterm>
+            <primary>contains</primary>
+          </indexterm>
+
+          <para>Target's contents must consist of (at minimum) the contents of
+          the argument to contains.</para>
+
+          <programlisting>ensure("Test") {
+ contains("es")
+}</programlisting>
+
+          <programlisting>...
+ "Test".contains("es") // Preferable to use shouldHave instead for readability
+...</programlisting>
+        </section>
+
+        <section>
+          <title>startsWith</title>
+
+          <indexterm>
+            <primary>startsWith</primary>
+          </indexterm>
+
+          <para>Target's contents must begin with the contents of the argument
+          to startsWith.</para>
+
+          <programlisting>ensure("Test") {
+  startsWith("Te")
+}</programlisting>
+
+          <programlisting>... // Issue 110. shouldStartWith doesn't exist in the dsl yet
+ "Test".shouldStartWith("Te") // Preferable to use shouldHave instead for readability
+...</programlisting>
+        </section>
+
+        <section>
+          <title>endsWith</title>
+
+          <indexterm>
+            <primary>endsWith</primary>
+          </indexterm>
+
+          <para>Target's contents must end with the contents of the argument
+          to endsWith.</para>
+
+          <programlisting>ensure("Test") {
+  endsWith("st")
+}</programlisting>
+
+          <programlisting>... // Issue 111. shouldEndWith doesn't exist in the dsl yet
+ "Test".shouldEndWith("st") // Preferable to use shouldHave instead for readability
+...</programlisting>
+        </section>
+
+        <indexterm class="endofrange" startref="ix.syntax.assertions.common" />
+      </section>
+    </section>
+
+    <indexterm class="endofrange" startref="ix.syntax" />
+  </chapter>
+
+  <chapter>
+    <title>Appendix</title>
+
+    <section>
+      <title>Glossary<anchor id="glossary" /></title>
+
+      <glosslist>
+        <glossentry>
+          <glossterm>BDD</glossterm>
+
+          <glossdef>
+            <para>See Behavior Driven Development</para>
+          </glossdef>
+        </glossentry>
+
+        <glossentry>
+          <glossterm>Behavior Driven Development</glossterm>
+
+          <glossdef>
+            <para>Agile software development technique that encourages
+            collaboration between developers, QA and non-technical or business
+            participants in a software project. It was originally conceived in
+            2003 by Dan North [1] as a response to Test Driven Development,
+            and has evolved over the last few years. The focus of BDD is the
+            language and interactions used in the process of software
+            development. Behavior-driven developers use their native language
+            in combination with the ubiquitous language of Domain Driven
+            Design to describe the purpose and benefit of their code. This
+            allows the developers to focus on why the code should be created,
+            rather than the technical details, and minimizes translation
+            between the technical language in which the code is written and
+            the domain language spoken by the business, users, stakeholders,
+            project management etc. (Courtesy:
+            http://en.wikipedia.org/wiki/Behavior_driven_development)</para>
+          </glossdef>
+        </glossentry>
+
+        <glossentry>
+          <glossterm>Story</glossterm>
+
+          <glossdef>
+            <para>Description of a requirement, which has an associated
+            benefit and criteria for validation. Contains any of the following
+            components: scenario, given, when then. It also may contain a
+            narrative with the following components: narrative, as_a, i_want,
+            so_that.</para>
+          </glossdef>
+        </glossentry>
+      </glosslist>
+
+      <para></para>
+    </section>
+  </chapter>
+
+  <index></index>
+</book>

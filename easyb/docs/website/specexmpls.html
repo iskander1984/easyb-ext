@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>easyb makes it easy, man</title>
+<meta name="keywords" content="BDD, behavior driven development, java, java bdd, groovy, groovy bdd, 
+groovy behavior driven development, java behavior driven development, ruby, rspec, easyb, easy bdd" />
+<meta name="description" content="easyb is story verification framework built in the spirit of behavior driven development." />
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-3500051-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<body>
+<!-- start header -->
+<div id="header">
+	<h1><a href="http://www.easyb.org"><span>easyb</span></a></h1>
+	<h2>&nbsp;&nbsp; -- BDD in java can't get any easier</h2>
+</div>
+<!-- end header -->
+
+
+
+
+
+<!-- start page -->
+<div id="page">
+	<!-- start content -->
+	<div id="content">
+		<div class="post">
+			<h2 class="title">Example specifications with easyb</h2>
+		
+			<div class="entry">
+			
+	
+	<p>Specifications are an easy way to capture behavior in a more natural way-- they almost read like plain English.</p>
+				
+				<h3>Examples</h3>
+
+    <p>Below is an example of using a specification to verify a <code>Queue</code>.</p>
+
+<pre><code>
+package org.easyb.bdd.specification.queue
+
+import org.easyb.bdd.Queue
+
+description "This is how a Queue must work"
+
+before "initialize the queue for each spec", {
+ queue = new Queue()
+}
+
+it "should dequeue item just enqueued", {
+ queue.enqueue(2)
+ queue.dequeue().shouldBe(2)
+}
+
+it "should throw an exception when null is enqueued", {
+ ensureThrows(RuntimeException.class) {
+  queue.enqueue(null)
+ }
+}
+
+it "should dequeue items in same order enqueued", {
+ [1..5].each {val ->
+  queue.enqueue(val)
+ }
+ [1..5].each {val ->
+  queue.dequeue().shouldBe(val)
+ }
+}	
+</code></pre>
+
+
+
+<p>Below is an example of validating the <code>ZipCodeValidator</code> object using the specification format rather than a story format (which was done on easyb's <a href="http://www.easyb.org">homepage</a>).</p>
+<pre><code>
+package org.easyb.bdd.specification.zip
+
+import org.easyb.bdd.zip.ZipCodeValidator
+
+before "initialize zipcodevalidator instance", {
+ zipvalidate = new ZipCodeValidator();
+}
+
+it "should deny invalid zip codes", {
+ ["221o1", "2210", "22010-121o"].each {zip ->
+  zipvalidate.validate(zip).is false
+ }
+}
+
+it "should accept valid zip codes", {
+ ["22101", "22100", "22010-1210"].each {zip ->
+  zipvalidate.validate(zip).shouldBe true
+ }
+}
+</code></pre>	
+
+
+<p>A specification may also be tagged as "pending" -- thus providing an indication of status. A pending specification is one which doesn't have an implementing closure for behavior like so:
+	
+<pre><code>
+package org.easyb.bdd.specification
+
+it "should show up as a pending specification"
+</code></pre>	
+
+<p>For more specification examples, check out <a href="http://easyb.org/source.html">easyb's source</a> -- easyb uses easyb to validate itself! </p>
+			</div>
+		</div>
+		
+	</div>
+	<!-- end content -->
+	
+	
+	
+	
+	
+	<!-- start sidebar -->
+	<div id="sidebar">
+		<ul>
+			<li>
+				<h2>Overview</h2>
+				<ul>
+					<li><a href="./index.html">Home</a></li>
+					<li><a href="./howtos.html">Stories</a></li>
+					<li><a href="./howtobb.html">Specifications</a></li>
+					<li><a href="./download.html">Download</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Examples</h2>
+				<ul>
+					<li><a href="./storyexmpls.html">Story examples</a></li>
+					<li><a href="./specexmpls.html">Specification examples</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Details</h2>
+				<ul>
+					<li><a href="./running.html">Running easyb</a></li>
+					<li><a href="./tutorialstack.html">An in-depth tutorial</a></li>
+					<li><a href="./dsls.html">easyb syntax specification</a></li>
+					<li><a href="./lic.html">License</a></li>
+					<li><a href="./source.html">Source code</a></li>
+					<li><a href="./contact.html">Contact</a></li>
+					<li><a href="./team.html">Meet the team</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Plug-ins</h2>
+				<ul>
+					<li><a href="./dbunit.html">DbUnit plug-in</a></li>
+					<li><a href="./xmlunit.html">XMLUnit plug-in</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Resources</h2>
+				<ul>
+					<li><a href="http://www.ibm.com/developerworks/edu/j-dw-java-easyb-i.html">Drive development with easyb</a></li>
+					<li><a href="http://dannorth.net/introducing-bdd/">Introducing BDD</a> (DanNorth.net)</li>
+					<li><a href="http://rspec.rubyforge.org/">RSpec</a></li>
+					<li><a href="http://groovy.codehaus.org/">Groovy</a></li>
+					<li><a href="http://code.google.com/p/easyb/w/list">easyb wiki</a></li>
+					<li><a href="./articles.html">Additional resources</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		  <div>
+  <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 4,
+  interval: 6000,
+  width: 250,
+  height: 300,
+  theme: {
+    shell: {
+      background: '#333333',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#000000',
+      color: '#ffffff',
+      links: '#4aed05'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    avatars: false,
+    behavior: 'all'
+  }
+}).render().setUser('easybdd').start();
+</script>
+  </div>
+    <div style="clear: both;">&nbsp;</div>
+	</div>
+	<!-- end sidebar -->
+</div>
+<!-- end page -->
+<div id="footer">
+
+</div>
+</body>
+</html>

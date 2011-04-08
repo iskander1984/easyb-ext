@@ -1,0 +1,6 @@
+import org.springframework.context.support.ClassPathXmlApplicationContext
+import groovy.xml.MarkupBuilder
+
+shared_behavior "springconf", {
+	springContextFileName='easyb-jms-context.xml'	 
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <!--Launch Config -->
+   <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+	    <launchConfigurationType
+	        name="Easyb Behaviour"
+	        delegate="org.easyb.launch.launcher.BehaviourLaunchConfigurationDelegate"
+	        modes="run, debug"               
+	        id="org.easyb.launch.launcher.BehaviourLaunchConfigurationDelegate">        
+	    </launchConfigurationType>
+	</extension>
+   
+	<extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+	    <launchConfigurationTypeImage
+	        icon="resources/images/icons/easyb.png"
+	        configTypeID="org.easyb.launch.launcher.BehaviourLaunchConfigurationDelegate"
+	        id="org.easyb.launch.easyblaunch.img">
+	    </launchConfigurationTypeImage>
+	</extension>
+	
+	<extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+	    <launchConfigurationTabGroup
+	        type="org.easyb.launch.launcher.BehaviourLaunchConfigurationDelegate"
+	        class="org.easyb.launch.launcher.BehaviourLaunchConfigurationTabGroup"
+	        id="org.easyb.launch.launcher.BehaviourLaunchConfigurationTabGroup">
+	    </launchConfigurationTabGroup>
+	</extension>
+	
+	<!--Launch short cut-->
+	<extension point="org.eclipse.debug.ui.launchShortcuts">
+	   <Shortcut
+	      id="org.easyb.launch.launcher.BehaviourLaunchShortcut"
+	      class="org.easyb.launch.launcher.BehaviourLaunchShortcut"
+	 		label="easyb behaviour"
+	 		icon="resources/images/icons/easyb.png"
+	 		modes="run, debug">
+ 
+            <contextualLaunch>
+           		<enablement>
+	           		<with variable="selection">
+		               <count value="1"/>
+		               <iterate>
+		                 <or>
+			        	  <test property="org.eclipse.debug.ui.matchesContentType" value="org.easyb.eclipse.contenttype.story"/>
+			        	  <test property="org.eclipse.debug.ui.matchesContentType" value="org.easyb.eclipse.contenttype.specification"/>
+		                 </or>
+		               </iterate>
+		             </with>
+           			
+           		</enablement>
+           		<contextLabel label="Behaviour" mode="run"/>
+           		<contextLabel label="Behaviour" mode="debug"/>
+           		
+        	</contextualLaunch>
+            <configurationType id="org.easyb.launch.launcher.BehaviourLaunchConfigurationDelegate"/>
+	
+	   </Shortcut>
+	 </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <command 
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.easyb.launch.launcher.BehaviourLaunchShortcut.run"
+            name="run easby behaviour">
+      </command>
+   </extension>	
+   
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.easyb.launch.launcher.BehaviourLaunchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+X S">
+      </key>
+   </extension>	
+
+</plugin>

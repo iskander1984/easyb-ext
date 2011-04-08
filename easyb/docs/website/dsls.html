@@ -1,0 +1,435 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>easyb makes it easy, man</title>
+<meta name="keywords" content="BDD, behavior driven development, java, java bdd, groovy, groovy bdd, 
+groovy behavior driven development, java behavior driven development, ruby, rspec, easyb, easy bdd" />
+<meta name="description" content="easyb is story verification framework built in the spirit of behavior driven development." />
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-3500051-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<body>
+<!-- start header -->
+<div id="header">
+	<h1><a href="http://www.easyb.org"><span>easyb</span></a></h1>
+	<h2>&nbsp;&nbsp; -- BDD in java can't get any easier</h2>
+</div>
+<!-- end header -->
+
+
+
+
+
+<!-- start page -->
+<div id="page">
+	<!-- start content -->
+	<div id="content">
+		<div class="post">
+			<h2 class="title">Domain Specific Language specifications of easyb</h2>
+		
+			<div class="entry">
+			<p>A <a href="http://en.wikipedia.org/wiki/Domain-specific_programming_language">Domain Specific Language</a> (or DSL, which is much easier to write and say) is a programming language designed for a specific task-- that is, it's a special purpose syntax. For example, <a href="http://ant.apache.org/">Ant</a>'s XML build files are DSLs for building software. </p>
+			
+			<p>Not surprisingly, easyb makes heavy use of DSLs for defining a behavior focused language-- in this case, easyb actually has two main DSLs-- one for defining stories and another for defining basic RSpec-like behaviors. </p>	
+			
+			<h2>Story DSL</h2>
+			
+			<p>Stories in easyb are files which contain scenarios; consequently, by convention, easyb story file names end in <code>.story</code>. For example, if you have a create account story, the file would be <code>CreateAccount.story</code>.</p>
+			
+			<p>Story files have 0..N <code>scenario</code>s in them. Scenarios then have a mixture of 0..N <code>given</code>s, <code>when</code>s, and <code>then</code>s, with <code>and</code>s linking them (if you desire).</p>	
+			
+			<p>Consequently, the definition of an easyb scenario is:</p>
+<pre><code>scenario "text", {
+ given "text", {}
+ when "text", {}
+ then "text", {}
+}
+</code></pre>
+
+<p>The body of any phrase (<code>given</code>, <code>when</code>, <code>then</code>) is optional as well (meaning <code>given "text"</code> without the trailing <code>, {}</code> implementation code is completely valid syntax)-- easyb will mark such an event as a pending one.</p>
+				
+<p>Remember, you can have as many <code>given</code>s, <code>when</code>s, and <code>then</code>s, with <code>and</code>s linking them; therefore, the DSL supports</p>
+
+<pre><code>scenario "text",{
+ given "text", {}
+ and
+ given "text", {}
+ when "text", {}
+ then "text", {}
+ and
+ then "text", {}
+}
+</code></pre>
+
+<p>The DSL also permits chaining <code>and</code>s -- for instance, after a <code>given</code>, the next <code>and</code> is assumed to also imply <code>given</code>. The same would be true of any <code>when</code>'s or <code>then</code>'s that had proceeding <code>and</code>'s. Accordingly, the following syntax is also valid:</p>
+
+<pre><code>scenario "text",{
+ given "text", {}
+ and "given text", {}
+ when "text", {}
+ then "text", {}
+ and "then text", {}
+}
+</code></pre>
+
+<p>Don't forget that <code>when</code>s are not required. Accordingly, the following variation works too.</p>
+
+<pre><code>scenario "text", {
+ given "text", {}
+ then "text", {}
+}
+</code></pre>	
+
+
+<h3>Further documenting stories</h3>
+
+<p>easyb supports capturing additional information regarding stories, such as a story's description and some detail regarding the features, benefits, and roles of a persona related to a story. For instance, the DSL supports a description syntax that takes a String value -- single quote or Groovy's triple quote trick. </p>
+
+<pre><code>description "some description"
+scenario "text"
+</code></pre>
+
+or
+
+
+<pre><code>description """some long description that requires
+multiple lines, etc
+"""
+scenario "text"
+</code></pre> 
+
+<p>What's more, you can provide additional details of a story via the <code>narrative</code> syntax:</p>
+
+
+<pre><code>description "text"
+
+narrative "description", {
+	as_a "role"
+	i_want "feature"
+	so_that "benefit"
+}
+
+scenario "text"
+</code></pre>
+
+<p>Both the <code>narrative</code> and <code>description</code> keywords are optional and they don't have to be used together-- i.e. you can use the <code>narrative</code> one without providing a <code>description</code>. These aspects will be captured in the output (i.e. story report) of an easyb run too.</p>
+
+
+<h3>Running non-implemented stories</h3>
+
+<p>easyb permits running stories that are not implemented yet-- thus, you can execute your documentation and see which stories are still <i>pending</i>. For instance, the closure (i.e. <code>{}</code>'s following a <code>scenario</code> or <code>given</code>/<code>when</code>/<code>then</code> phrase) is optional. Thus, the following story with two scenarios could be run:</p>
+
+<pre><code>
+scenario "this is a pending scenario", {
+ given "something"
+ when "something is done"
+ then "there is a way to handle it"
+}
+
+scenario "this is also pending"
+</code></pre>
+
+<p>Both scenarios will be executed and easyb will consider them pending and thus report that-- in this case, easyb will have run one story with two scenarios, each in a pending state:</p>
+
+<pre><code>
+Running pending example story (PendingExample.story)
+Scenarios run: 2, Failures: 0, Pending: 2, Time Elapsed: 0.444 sec
+
+2 total behaviors run (including 2 pending behaviors) with no failures
+</code></pre>
+
+
+<h2>Behavior DSL</h2>
+	<p>easyb supports an RSpec-like DSL for defining simple behaviors. Along with supporting <code>it</code>, you can create a fixture using the <code>before</code> syntax. 
+<pre><code>
+before "", {}
+it "", {}
+</code></pre>
+</p>
+<p>
+Of course, you can have as many <code>it</code>'s as you'd like. The contract of easyb is that the code in <code>before</code> will be run before <i>each</i> <code>it</code>.	If you'd only like a one time setup, then place that logic above the first <code>it</code> and that code will be run <i>once</i>.	
+		
+		</p>
+
+<h2>easyb should syntax</h2>
+		
+<p>easyb auto-magically wires all objects within the confines of a story or behavior to respond to a series of <code>should</code> calls. That means you can easily verify the state of things by writing phrases like :</p>
+	
+<pre><code>
+var.shouldNotBe null  
+and  
+var.length().shouldEqual 6
+</code></pre>	
+
+<p>Currently, easyb supports the following phrases, where the phrase is attached to <i>any</i> object and the phrase takes a value to be verified against. </p>
+
+<pre><code>
+shouldBe
+shouldEqual
+shouldBeEqual
+shouldBeEqualTo
+</code></pre>
+
+<p>easyb supports the negative of the above phrases as follows (same rules apply as above):</p>
+
+<pre><code>	
+shouldNotBe
+shouldNotEqual
+shouldntBe
+shouldntEqual
+</code></pre>
+
+<p>What's more, easyb allows you to verify object types, such as <code>value.shouldBeAn Integer</code>. Both positive and negative phrases are supported:</p>
+
+<pre><code>
+shouldBeA
+shouldBeAn
+shouldNotBeA
+shouldNotBeAn
+</code></pre>
+
+<p>You can compare values with the <code>should</code> syntax as well:</p>
+
+<pre><code>
+shouldBeGreaterThan
+shouldBeLessThan
+shouldStartWith
+shouldEndWith
+</code></pre>
+
+<p>Lastly, easyb supports verifying objects in a collection or properties of objects via the <code>shouldHave</code> method.</p>
+
+<pre><code>
+shouldHave	
+shouldNotHave
+</code></pre>	
+	
+<p>To see all of the above verifications in action, look at some of the stories and behaviors in easyb's source.</p>	
+		
+<h2>easyb ensure syntax</h2>
+<p>easyb has an expressive <code>ensure</code> syntax that is similar in nature to Java's <code>assert</code> but a bit more readable.</p>	
+<p>Whenever you want to verify the state of a particular object, use easyb's <code>ensure</code> closure, which supports the following syntax: </p>
+<pre><code>
+ensure(object or expression){
+  expression
+}
+</code></pre>
+
+<p>That is, the <code>ensure</code> closure takes a value, which could be a normal object or an expression itself. For instance, you could ensure that some value was <code>false</code> by writing:</p>
+<pre><code>
+ensure(!value)
+</code></pre>
+	
+<p>You could alternatively write:</p>
+<pre><code>
+ensure(value){
+  isFalse
+}
+</code></pre>
+
+<p>As you can see, inside the <code>ensure</code> clause you can do some cool things, such as:</p>
+<pre><code>
+isNull
+isNotNull
+isA&lt;class type&gt;
+isEqualTo(value)
+isEqualTo&lt;value&gt;
+isNotEqualTo&lt;value&gt;
+isTrue
+isFalse
+</code></pre>
+
+<p>You can chain clauses too:</p>
+<pre><code>
+ensure(value){
+ isNotNull
+ and
+ isAString
+}
+</code></pre>
+
+<p>The <code>ensure</code> DSL is quite forgiving-- for instance, check out these code examples:</p>
+
+<pre><code>
+mVal = "Test"
+ensure(mVal){
+ isEqualToTest
+ and
+ isEqualTo "Test"
+}
+</code></pre>
+
+<pre><code>
+mVal = 23
+ensure(mVal){
+ isEqualTo23
+ and
+ isEqualTo 23
+}
+</code></pre>
+
+<p>You can work with collections and even ensure fields on objects too:</p>
+<pre><code>
+ensure("test"){
+ contains("est")
+}
+</code></pre>
+
+<pre><code>
+ensure([1,2,3]){
+ contains(3)
+ and
+ contains([2,3])
+}
+</code></pre>
+
+<pre><code>
+def person = new Person("Andy", 11)
+ensure(person){
+ contains(firstName:"Andy")
+ and 
+ contains(age:11)
+}
+</code></pre>
+
+<p>Flexibility is key, hence you can use <code>has</code> instead of <code>contains</code> if you wish:</p>
+<pre><code>
+def person = new Person("Jill", 11)
+ ensure(person){
+  has([firstName:"Jill", age:11])
+}
+</code></pre>
+
+<p>You can also check that an exception or a list of exceptions are thrown using the <code>ensureThrows</code> variant of the <code>ensure</code> closure:</p>
+<pre><code>
+ensureThrows(RuntimeException) {
+	throw new RuntimeException("Test")
+}
+
+ensureThrows([IllegalArgumentException, NullPointerException]) {
+  throw new NullPointerException("null")
+}	
+</code></pre>
+
+<p>You can also ensure that something is failing using the <code>ensureFails</code> closure:</p>
+
+<pre><code>
+ensureFails {
+  1.shouldBe 2
+}
+</code></pre>
+
+			</div>
+		</div>
+		
+	</div>
+	<!-- end content -->
+	
+	
+	
+	
+	
+	<!-- start sidebar -->
+	<div id="sidebar">
+		<ul>
+			<li>
+				<h2>Overview</h2>
+				<ul>
+					<li><a href="./index.html">Home</a></li>
+					<li><a href="./howtos.html">Stories</a></li>
+					<li><a href="./howtobb.html">Specifications</a></li>
+					<li><a href="./download.html">Download</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Examples</h2>
+				<ul>
+					<li><a href="./storyexmpls.html">Story examples</a></li>
+					<li><a href="./specexmpls.html">Specification examples</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Details</h2>
+				<ul>
+					<li><a href="./running.html">Running easyb</a></li>
+					<li><a href="./tutorialstack.html">An in-depth tutorial</a></li>
+					<li><a href="./dsls.html">easyb syntax specification</a></li>
+					<li><a href="./lic.html">License</a></li>
+					<li><a href="./source.html">Source code</a></li>
+					<li><a href="./contact.html">Contact</a></li>
+					<li><a href="./team.html">Meet the team</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Plug-ins</h2>
+				<ul>
+					<li><a href="./dbunit.html">DbUnit plug-in</a></li>
+					<li><a href="./xmlunit.html">XMLUnit plug-in</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Resources</h2>
+				<ul>
+					<li><a href="http://www.ibm.com/developerworks/edu/j-dw-java-easyb-i.html">Drive development with easyb</a></li>
+					<li><a href="http://dannorth.net/introducing-bdd/">Introducing BDD</a> (DanNorth.net)</li>
+					<li><a href="http://rspec.rubyforge.org/">RSpec</a></li>
+					<li><a href="http://groovy.codehaus.org/">Groovy</a></li>
+					<li><a href="http://code.google.com/p/easyb/w/list">easyb wiki</a></li>
+					<li><a href="./articles.html">Additional resources</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		  <div>
+  <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 4,
+  interval: 6000,
+  width: 250,
+  height: 300,
+  theme: {
+    shell: {
+      background: '#333333',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#000000',
+      color: '#ffffff',
+      links: '#4aed05'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    avatars: false,
+    behavior: 'all'
+  }
+}).render().setUser('easybdd').start();
+</script>
+  </div>
+    <div style="clear: both;">&nbsp;</div>
+	</div>
+	<!-- end sidebar -->
+</div>
+<!-- end page -->
+<div id="footer">
+
+</div>
+</body>
+</html>

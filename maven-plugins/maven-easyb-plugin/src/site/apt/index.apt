@@ -1,0 +1,8 @@
+Maven Easyb Plugin
+
+  The Maven Easyb Plugin can be used to execute easyb stories and behaviors during the test lifecycle of a Maven build.
+  It can also optionally be used to create HTML representations of your easyb stories effectively allowing requirement
+  documentation to be generated from the stories definitions themselves.
+
+  Full documentation of this plugin can be found on the {{{plugin-info.html}goals page}}\
+  Also, example usages can be seen on the {{{usage.html}usage page}}

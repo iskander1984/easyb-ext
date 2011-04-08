@@ -1,0 +1,429 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  <title>easyb makes it easy, man</title>
+  <meta name="keywords" content="BDD, behavior driven development, java, java bdd, groovy, groovy bdd, 
+groovy behavior driven development, java behavior driven development, ruby, rspec, easyb, easy bdd, maven, 
+ant bdd, maven bdd, ant"/>
+  <meta name="description" content="easyb is story verification framework built in the spirit of behavior driven development."/>
+  <link href="default.css" rel="stylesheet" type="text/css"/>
+</head>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-3500051-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<body>
+<!-- start header -->
+<div id="header">
+  <h1><a href="http://www.easyb.org"><span>easyb</span></a></h1>
+
+  <h2>&nbsp;&nbsp; -- BDD in java can't get any easier</h2>
+</div>
+<!-- end header -->
+
+
+<!-- start page -->
+<div id="page">
+<!-- start content -->
+<div id="content">
+<div class="post">
+<h2 class="title">Running easyb</h2>
+
+<div class="entry">
+
+<p>easyb can be invoked via:</p>
+<ul>
+  <li><a href='#commandline'>Command line</a></li>
+  <li><a href='#ant'>Ant</a></li>
+  <li><a href='#maven'>Maven</a></li>
+  <li><a href='#intellij'>IntelliJ</a></li>
+<li><a href='#eclipse'>Eclipse</a></li>
+</ul>
+
+<a name='commandline'>
+<h2>Command line </h2>
+</a>
+
+<p>easyb comes with a command line runner that takes the name of a particular behavior or story you wish to run. You can
+  optionally pass in a few different flag options to output various report formats as well. </p>
+
+
+<pre><code>
+  c:>java org.easyb.BehaviorRunner my/path/to/MyStory.groovy
+</code></pre>
+
+<p>If no additional arguments are specified, you'll see a report printed to <code>System.out</code> that looks something
+  like this: </p>
+<pre><code>
+Running your story (Your.story)
+Scenarios run: 1, Failures: 0, Pending: 0, Time Elapsed: 0.454 sec
+
+1 behavior run with no failures
+</code></pre>
+
+<p>Want to run multiple behaviors or stories in a single run? Yep, easyb supports that too. Just pass multiple stories
+on the command line.</p>
+
+<pre><code>
+  c:>java org.easyb.BehaviorRunner my/path/to/MyStory.groovy my/path/to/MySecondStory.groovy
+</code></pre>
+
+<p>Note, the runner doesn't care if you run a specification or a story-- they are run the same either way! Easy, eh?</p>
+
+<p>easyb supports a few command line arguments -- namely, you can pass in a <code>-ef</code> or a <code>-e</code> for exception reporting. The <code>-ef</code> filters an exception trace to remove a lot of the noise Groovy inserts in a call stack. </p>
+
+<h3>Story reporting via the command line</h3>
+
+<p>You can generate a story printout of an easyb story by passing in the <code>-txtstory</code> flag as follows:</p>
+
+<pre><code>
+  c:>java org.easyb.BehaviorRunner my/path/to/MyStory.groovy \
+  -txtstory ./target/mystory.txt
+</code></pre>
+
+<p>Note, the line break in the above example is for formatting purposes only.</p>
+
+
+<h3>HTML reporting via the command line</h3>
+
+<p>To produce an HTML report, which lists the status and summaries of all stories and specifications executed during an easyb run, type:</p>
+
+
+<pre><code>
+  c:>java org.easyb.BehaviorRunner my/path/to/MyStory.groovy \
+  -html my/path/report.html
+</code></pre>
+
+<p>The path to and name of the report is optional as easyb will attempt to create a default one if neither is provided.</p>
+	
+<h3>XML reporting via the command line</h3>
+
+<p>If you'd rather produce an XML report, just pass in the <code>-xml</code> flag and provide a path where the xml
+  report should be written. For instance, using the same example from earlier, if you'd rather have an XML report,
+  simply type:</p>
+
+
+<pre><code>
+  c:>java org.easyb.BehaviorRunner my/path/to/MyStory.groovy \
+  -xml my/path/report.xml
+</code></pre>
+
+<p>Note, the line break in the above example is for formatting purposes only.</p>
+
+<h3>Colored command line output</h3>
+  
+<p>You can also show the executed stories by the command line, just pass in the <code>-prettyprint</code> flag as follows:</p>
+
+<pre><code>
+  $ java org.easyb.BehaviorRunner my/path/to/MyTestStory.groovy -prettyprint
+</code></pre>
+
+<p>Produces the output:</p>
+
+<pre><code>
+  1 scenario executed, but status is failure! Total failures: 1
+    Story: myTest
+
+      scenario show colored output
+        given a string
+        <span style="color:green">then it should be null</span>
+        given a number
+        <span style="color:red">then it shouldn't be 0 [FAILURE: expected values to differ but both were 0]</span>
+        given an array
+        <span style="color:cyan">then it should be pending [PENDING]</span>
+</code></pre>
+
+<h3>Additional command line arguments</h3>
+
+<p>easyb offers the ability to see exception stack traces via two flags.</p>
+	
+	<ul><li>For viewing exception traces, easyb offers two options:
+		<ul>
+      <li><code>-e</code> for a full exception stack trace</li>
+      <li><code>-ef</code> for exception stack trace filtering — that is, a lot of the noise associated with a Groovy exception stack is filtered out</li>
+</ul>
+	</li>
+	<li>You can run behavior tags by passing the <code>-tags</code> flag along with a single or comma-delimited list of tag names.</li>
+	</ul>
+
+<a name='ant'>
+<h2>Ant</h2>
+</a>
+
+<p>You can run your behaviors and stories via easyb's Ant task. It's easy:</p>
+<ol>
+  <li>load the task (via Ant's <code>taskdef</code>)-- the class name is <code>org.easyb.ant.BehaviorRunnerTask</code>
+  </li>
+  <li>provide a location for a report (or series of reports) and then provide a <code>fileset</code> with the location(s) of your behaviors
+    and stories
+  </li>
+</ol>
+
+<p>Defining the task looks like this:</p>
+<pre><code>
+  &lt;taskdef name="easyb" classname="org.easyb.ant.BehaviorRunnerTask"&gt;
+    &lt;classpath&gt;
+      &lt;pathelement location="${lib.dir}/release/easyb-xx.jar"/&gt;
+    &lt;/classpath&gt;
+  &lt;/taskdef&gt;
+</code></pre>
+
+
+<p>Running the task looks like:</p>
+
+
+<pre><code>
+    &lt;easyb&gt;
+      &lt;classpath&gt;
+         &lt;path refid="build.classpath" /&gt;
+		 &lt;pathelement path="target/classes" /&gt;
+      &lt;/classpath&gt;
+     &lt;report location="target/story.txt" format="txtstory" /&gt;
+     &lt;behaviors dir="${mybehaviors.dir}"&gt;
+       &lt;include name="**/*Story.groovy"/&gt;
+     &lt;/behaviors&gt;
+    &lt;/easyb&gt;
+</code></pre>
+
+<p>The <code>easyb</code> task takes a number of options including: 
+	<ul>
+		<li><code>failureFile</code> -- path to file which will contain any failed behaviors </li>
+		<li><code>noExecute</code> -- boolean, which allows you to generate a report without executing any stories</li>
+		<li><code>tags</code> -- a single or comma-delimited list of tags to execute</li>
+	</ul>
+</p>
+
+<p>Please note, report's have numerous formats, including <code>html</code>, <code>xml</code>, <code>txtstory</code>, and <code>txtspecification</code>.</p>
+
+<p>Produces output:</p>
+
+<pre><code>
+    [easyb] Running story listener story (StoryListener.story)
+	[easyb] Scenarios run: 2, Failures: 0, Pending: 0, Time Elapsed: 0.06 sec
+	[easyb] 2 total behaviors run with no failures
+	[easyb] easyb execution passed
+
+  BUILD SUCCESSFUL
+  Total time: 3 seconds
+</code></pre>
+
+<h3>Failures</h3>
+
+<p>The point of having your behaviors run as part of your build is to notify you when they catch possible code problems. easyb also allows a user specified property to be set to true if the build fails.</p>
+
+<p>This property is called <code>failureProperty</code> and using it would look like this</p>
+<pre><code>
+  &lt;easyb failureProperty="easyb.failed"&gt;
+</code></pre>
+
+<p>That alone doesn't fail the build but puts the flexibility in your hands to fail it, print it or do nothing with it as you please. Here is  a common example of using that property to fail a build:</p>
+
+<pre><code>
+  &lt;fail if="easyb.failed" message="Execution halted as behaviors failed"/&gt;
+</code></pre>
+
+<p>Now when a behavior fails our build will halt with output like so:</p>
+<pre><code>
+ [easyb] easyb is preparing to process 1 file(s)
+ [easyb] 9 behavior steps run , but status is failure! Total failures: 1
+ [easyb]   Failure -> then the dealer should win in BlackjackStory.groovy
+ [easyb]   VerificationException: expected lossss but was loss:
+ ....
+ ....
+ [easyb] specification failures detected!
+ [easyb] easyb execution FAILED
+
+BUILD FAILED
+/blah/blah/build.xml:75: easyb reported a failure
+
+Total time: 3 seconds
+</code></pre>
+
+<p>Now you can be more confident that your build hasn't been broken by a change since you get instant feedback on behavior failures.</p>
+
+<h3>Story Printing</h3>
+
+<p>easyb embraces the idea that stories are a link between the business requirements and your code. To help use those stories when talking to your clients about requirements, easyb provides a way to print out just the stories without a lot of geeky code.</p>
+
+<p>To print out a story report via Ant, simply create a <code>report</code> element with its <code>format</code> attribute set to <code>txtstory</code> as follows:</p>
+
+<pre><code>
+  &lt;report location="target/stories.txt" format="txtstory"/&gt;
+</code></pre>
+
+<p>Here is some sample output:</p>
+<pre><code>
+9 behavior steps executed successfully  
+ Story: blackjack
+  scenario tie game when cards are dealt but dealer gets higher card
+    given a game a blackjack game and both players have a score of 10
+    when the dealer gets an Ace and you get a 10
+    then the dealer should win
+  scenario tie game when cards are dealt but player gets higher card
+    given a game a blackjack game and both players have a score of 10
+    when the dealer gets a 10 and you get an Ace
+    then the player should win
+</code></pre>
+
+<p>That looks like something business users (or management) could understand-- they might even be able to *gasp* write them!</p>
+
+<a name='maven'>
+<h2>Maven</h2>
+</a>
+
+<p>You can also run your behaviors and stories via easyb's Maven plugin as well as generate HTML story reports. It's easy as fully explained on the <a href='http://www.easyb.org/maven-easyb-plugin'>maven-easyb-plugin</a> site.  The latest versions of the easyb Maven plugin are available at <a href="http://repo1.maven.org/maven2/org/easyb/">Maven central</a>, so you shouldn't need to configure anything beyond the plugin in your POM.
+
+<p>If you like living on the edge (or just want the latest features and don't mind that there might be some rough edges), then you can point your POM to the easyb snapshot repository:</p>
+
+<pre><code>
+  &lt;project&gt;
+  ...
+    &lt;repositories&gt;
+      &lt;repository&gt;
+        &lt;id&gt;sonatype-snapshots&lt;/id&gt;
+        &lt;url&gt;http://oss.sonatype.org/content/repositories/snapshots&lt;/url&gt;
+      &lt;/repository&gt;
+    &lt;/repositories&gt;
+    &lt;pluginRepositories&gt;
+      &lt;pluginRepository&gt;
+        &lt;id&gt;sonatype-plugin-snapshots&lt;/id&gt;
+        &lt;url&gt;http://oss.sonatype.org/content/repositories/snapshots&lt;/url&gt;
+      &lt;/pluginRepository&gt;
+    &lt;/pluginRepositories&gt;
+  ...
+  &lt;/project&gt;
+</code></pre>
+
+<a name='intellij'>
+<h2>IntelliJ</h2>
+</a>
+
+<p>We have created an easyb plugin for IntelliJ that makes it super easyb to work with easyb specifications and to run and debug them.  This plugin can be downloaded from the IntelliJ IDEA plug-in repository -- just check within your IDE's settings.
+
+<a name='eclipse'>
+<h2>Eclipse</h2>
+</a>
+
+<p>We have created an easyb plugin for Eclipse that makes it super easyb to work with easyb specifications and to run them. 
+</p>
+
+
+<p>Installing the plugin works as follows:
+<ol>
+<li>Go to the <b>Help</b> menu and then select <b>Software Updates...</b></li>
+<li>Hit the <b>Add Site..</b> button and in the resulting dialog, for the location type: <a href="http://easyb.googlecode.com/svn/trunk/eclipse-plugins/org.easyb.eclipse.updatesite/">http://easyb.googlecode.com/svn/trunk/eclipse-plugins/org.easyb.eclipse.updatesite/</a></li>
+<li>Hit the <b>Ok</b> button</li>
+<li>Select the easyb Eclipse Update Site in the list box and then hit the <b>Install...</b> button</li>
+</ol>
+</p>
+
+
+</div>
+</div>
+
+</div>
+<!-- end content -->
+
+
+<!-- start sidebar -->
+<div id="sidebar">
+	<ul>
+		<li>
+			<h2>Overview</h2>
+			<ul>
+				<li><a href="./index.html">Home</a></li>
+				<li><a href="./howtos.html">Stories</a></li>
+				<li><a href="./howtobb.html">Specifications</a></li>
+				<li><a href="./download.html">Download</a></li>
+			</ul>
+		</li>
+		<li>
+			<h2>Examples</h2>
+			<ul>
+				<li><a href="./storyexmpls.html">Story examples</a></li>
+				<li><a href="./specexmpls.html">Specification examples</a></li>
+			</ul>
+		</li>
+		<li>
+			<h2>Details</h2>
+			<ul>
+				<li><a href="./running.html">Running easyb</a></li>
+				<li><a href="./tutorialstack.html">An in-depth tutorial</a></li>
+				<li><a href="./dsls.html">easyb syntax specification</a></li>
+				<li><a href="./lic.html">License</a></li>
+				<li><a href="./source.html">Source code</a></li>
+				<li><a href="./contact.html">Contact</a></li>
+				<li><a href="./team.html">Meet the team</a></li>
+			</ul>
+		</li>
+		
+		<li>
+			<h2>Plug-ins</h2>
+			<ul>
+				<li><a href="./dbunit.html">DbUnit plug-in</a></li>
+				<li><a href="./xmlunit.html">XMLUnit plug-in</a></li>
+			</ul>
+		</li>
+		<li>
+			<h2>Resources</h2>
+			<ul>
+				<li><a href="http://www.ibm.com/developerworks/edu/j-dw-java-easyb-i.html">Drive development with easyb</a></li>
+				<li><a href="http://dannorth.net/introducing-bdd/">Introducing BDD</a> (DanNorth.net)</li>
+				<li><a href="http://rspec.rubyforge.org/">RSpec</a></li>
+				<li><a href="http://groovy.codehaus.org/">Groovy</a></li>
+				<li><a href="http://code.google.com/p/easyb/w/list">easyb wiki</a></li>
+				<li><a href="./articles.html">Additional resources</a></li>
+			</ul>
+		</li>
+		
+	</ul>
+	  <div>
+  <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 4,
+  interval: 6000,
+  width: 250,
+  height: 300,
+  theme: {
+    shell: {
+      background: '#333333',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#000000',
+      color: '#ffffff',
+      links: '#4aed05'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    avatars: false,
+    behavior: 'all'
+  }
+}).render().setUser('easybdd').start();
+</script>
+  </div>
+    <div style="clear: both;">&nbsp;</div>
+</div>
+<!-- end sidebar -->
+</div>
+<!-- end page -->
+<div id="footer">
+  
+</div>
+</body>
+</html>

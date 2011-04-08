@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>easyb makes it easy, man</title>
+<meta name="keywords" content="BDD, behavior driven development, java, java bdd, groovy, groovy bdd, 
+groovy behavior driven development, java behavior driven development, ruby, rspec, easyb, easy bdd" />
+<meta name="description" content="easyb is story verification framework built in the spirit of behavior driven development." />
+<link href="default.css" rel="stylesheet" type="text/css" />
+</head>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-3500051-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<body>
+<!-- start header -->
+<div id="header">
+	<!-- 
+	<form id="search" method="get" action="">
+		<fieldset>
+		<legend>Search</legend>
+		<input id="searchfield" type="text" name="s" value="" />
+		<input id="searchsubmit" type="submit" value="Search" />
+		</fieldset>
+	</form>
+	-->
+	<h1><a href="http://www.easyb.org"><span>easyb</span></a></h1>
+	<h2>&nbsp;&nbsp; -- BDD in java can't get any easier</h2>
+</div>
+<!-- end header -->
+<!-- start page -->
+<div id="page">
+	<!-- start content -->
+	
+	
+	
+	
+	
+	<div id="content">
+		<div class="post">
+			<h2 class="title">easyb specifications</h2>
+		
+			<div class="entry">
+				<p>easyb supports a few different mechanisms for defining behaviors. You can (depending on what's more comfortable for you):
+					<ul>
+						<li>define RSpec style specifications using <code>before</code> and <code>it</code></li>
+						<li>define stories via <code>given</code>, <code>when</code>, and <code>then</code></li>
+					</ul>
+				</p>
+				<p>	
+					Each style has a few associated semantical rules that turn out to be quite logical. 
+				 </p>
+				
+				<h2>Basic specifications</h2>
+				
+				<p>Just like with RSpec, easyb enables you to use the <code>it</code> style syntax to describe behavior-- this enables a more literate pattern of programming (i.e. "it should behave like this"). For example, if you have a <code>queue</code> object, then conceivably, the behavior of the <code>dequeue</code> method would be that it <i>should</i> return the last item <code>enqueue</code>d. </p>
+
+<p>Accordingly, with easyb, capturing that behavior is as simple as writing: </p>				
+<pre><code>
+queue = new Queue()
+
+it "should dequeue gives item just enqueued", {
+ queue.enqueue(2)
+ queue.dequeue().shouldBe(2)
+}
+</code></pre>
+
+<p>Needless to say, with Groovy, you could also write the verification step in the above <code>it</code> as </p>
+	
+<pre><code>
+queue.dequeue().shouldBe 2
+</code></pre> 
+<p>
+(note, the parenthesizes are removed for clarity). What's more, you may decide that the behavior of the queue should be that if someone <code>enqueue</code>s <code>null</code>, an exception should be thrown. Consequently, you could add this behavior: </p>
+
+<pre><code>
+it "should throw an exception when null is enqueued", {
+ ensureThrows(RuntimeException){
+  queue.enqueue(null)
+ }
+}
+</code></pre>
+
+<p>You can add as many specifications as you'd like this way too-- you can also create fixture logic should you require it.</p>
+
+<h3>Before with easyb</h3>
+
+<p>Now you have two specifications, in which case, you may decide that you'd like the <code>queue</code> initialized <i>for each</i> behavior rather than once. easyb supports a <code>before</code> construct that when utilized, ensures that the logic within it is run before each <code>it</code> behavior. </p>
+
+<p>You could then rewrite the above specification like so:</p>
+
+<pre><code>
+before "initialize the queue for each spec", {
+ queue = new Queue()   
+}
+	
+it "should dequeue gives item just enqueued", {
+ queue.enqueue(2)
+ queue.dequeue().shouldBe(2)
+}
+
+it "should throw an exception when null is enqueued", {
+ ensureThrows(RuntimeException){
+  queue.enqueue(null)
+ }
+}
+</code></pre>	
+				
+<p>Is that easy or what? By the way, did you notice that in the first <code>it</code> clause, you could easily write an <code>ensure</code> clause like <code>ensure(queue.dequeue() == 2)</code>? Of course, using <code>shouldBe</code> is a lot cooler. And easier. Easy as you want it. </p>				
+				
+				
+				
+			</div>
+		</div>
+		
+	</div>
+	<!-- end content -->
+	
+	
+	
+	<!-- start sidebar -->
+	<!-- start sidebar -->
+	<div id="sidebar">
+		<ul>
+			<li>
+				<h2>Overview</h2>
+				<ul>
+					<li><a href="./index.html">Home</a></li>
+					<li><a href="./howtos.html">Stories</a></li>
+					<li><a href="./howtobb.html">Specifications</a></li>
+					<li><a href="./download.html">Download</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Examples</h2>
+				<ul>
+					<li><a href="./storyexmpls.html">Story examples</a></li>
+					<li><a href="./specexmpls.html">Specification examples</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Details</h2>
+				<ul>
+					<li><a href="./running.html">Running easyb</a></li>
+					<li><a href="./tutorialstack.html">An in-depth tutorial</a></li>
+					<li><a href="./dsls.html">easyb syntax specification</a></li>
+					<li><a href="./lic.html">License</a></li>
+					<li><a href="./source.html">Source code</a></li>
+					<li><a href="./contact.html">Contact</a></li>
+					<li><a href="./team.html">Meet the team</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Plug-ins</h2>
+				<ul>
+					<li><a href="./dbunit.html">DbUnit plug-in</a></li>
+					<li><a href="./xmlunit.html">XMLUnit plug-in</a></li>
+				</ul>
+			</li>
+			<li>
+				<h2>Resources</h2>
+				<ul>
+					<li><a href="http://www.ibm.com/developerworks/edu/j-dw-java-easyb-i.html">Drive development with easyb</a></li>
+					<li><a href="http://dannorth.net/introducing-bdd/">Introducing BDD</a> (DanNorth.net)</li>
+					<li><a href="http://rspec.rubyforge.org/">RSpec</a></li>
+					<li><a href="http://groovy.codehaus.org/">Groovy</a></li>
+					<li><a href="http://code.google.com/p/easyb/w/list">easyb wiki</a></li>
+					<li><a href="./articles.html">Additional resources</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		  <div>
+  <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 4,
+  interval: 6000,
+  width: 250,
+  height: 300,
+  theme: {
+    shell: {
+      background: '#333333',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#000000',
+      color: '#ffffff',
+      links: '#4aed05'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    avatars: false,
+    behavior: 'all'
+  }
+}).render().setUser('easybdd').start();
+</script>
+  </div>
+    <div style="clear: both;">&nbsp;</div>
+	</div>
+	<!-- end sidebar -->
+</div>
+<!-- end page -->
+<div id="footer">
+
+</div>
+</body>
+</html>
