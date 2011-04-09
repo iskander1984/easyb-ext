@@ -1,0 +1,4 @@
+This is a forked version of Easyb BDD framework.
+It includes easyb-jms plugin
+
+To be able to build easyb or it's plugins you should install ivy and gant
