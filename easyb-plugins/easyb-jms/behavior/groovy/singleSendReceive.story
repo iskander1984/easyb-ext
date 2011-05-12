@@ -13,7 +13,7 @@ scenario "We should be able to send and receive message", {
   }	
   
   when "we send message", {
-	receivedMessage = sendAndReceive(inputQueue, outputQueue, messageToSend)
+	receivedMessage = sendAndReceive(inputQueue, outputQueue, messageToSend, 3000)
   }
   
   then "messages should be equal", {

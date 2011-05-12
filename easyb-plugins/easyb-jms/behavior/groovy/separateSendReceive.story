@@ -13,8 +13,9 @@ scenario "We should be able to send and receive message", {
   }	
   
   when "we send message", {
-	send(inputQueue, messageToSend)
-	receivedMessage = receive(outputQueue)
+  	String correlationId = createCorrelationId()
+	send(inputQueue, messageToSend, correlationId)
+	receivedMessage = receive(outputQueue, correlationId, 3000)
   }
   
   then "messages should be equal", {
